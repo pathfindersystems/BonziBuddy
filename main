@@ -1,0 +1,82 @@
+import tkinter as tk
+from tkinter import messagebox
+import random
+import webbrowser
+import pyttsx3
+
+class PurpleMonkeyAssistant:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Purple Monkey Assistant")
+        self.master.geometry("300x400")
+        self.master.resizable(False, False)
+
+        # Set up text-to-speech engine
+        self.engine = pyttsx3.init()
+        self.engine.setProperty('rate', 150)
+
+        # Create canvas for drawing the monkey
+        self.canvas = tk.Canvas(self.master, width=300, height=200, bg='white')
+        self.canvas.pack()
+
+        # Draw a simple purple monkey (just a purple circle with eyes for simplicity)
+        self.canvas.create_oval(100, 50, 200, 150, fill='purple', outline='black')
+        self.canvas.create_oval(130, 80, 145, 95, fill='white', outline='black')
+        self.canvas.create_oval(155, 80, 170, 95, fill='white', outline='black')
+        self.canvas.create_oval(135, 85, 140, 90, fill='black')
+        self.canvas.create_oval(160, 85, 165, 90, fill='black')
+
+        # Create buttons
+        tk.Button(self.master, text="Tell a Joke", command=self.tell_joke).pack(pady=5)
+        tk.Button(self.master, text="Search Web", command=self.search_web).pack(pady=5)
+        tk.Button(self.master, text="Dance", command=self.dance).pack(pady=5)
+        tk.Button(self.master, text="Speak", command=self.speak).pack(pady=5)
+
+    def tell_joke(self):
+        jokes = [
+            "Why don't scientists trust atoms? Because they make up everything!",
+            "Why did the scarecrow win an award? He was outstanding in his field!",
+            "Why don't eggs tell jokes? They'd crack each other up!",
+            "Why don't skeletons fight each other? They don't have the guts!",
+            "What do you call a fake noodle? An impasta!"
+        ]
+        joke = random.choice(jokes)
+        messagebox.showinfo("Joke", joke)
+        self.speak_text(joke)
+
+    def search_web(self):
+        query = tk.simpledialog.askstring("Web Search", "What would you like to search for?")
+        if query:
+            url = f"https://www.google.com/search?q={query}"
+            webbrowser.open(url)
+
+    def dance(self):
+        positions = [
+            (100, 50, 200, 150),
+            (90, 60, 190, 160),
+            (110, 40, 210, 140),
+            (100, 50, 200, 150)
+        ]
+        for pos in positions:
+            self.canvas.delete("all")
+            self.canvas.create_oval(pos[0], pos[1], pos[2], pos[3], fill='purple', outline='black')
+            self.canvas.create_oval(pos[0]+30, pos[1]+30, pos[0]+45, pos[1]+45, fill='white', outline='black')
+            self.canvas.create_oval(pos[0]+55, pos[1]+30, pos[0]+70, pos[1]+45, fill='white', outline='black')
+            self.canvas.create_oval(pos[0]+35, pos[1]+35, pos[0]+40, pos[1]+40, fill='black')
+            self.canvas.create_oval(pos[0]+60, pos[1]+35, pos[0]+65, pos[1]+40, fill='black')
+            self.master.update()
+            self.master.after(200)
+
+    def speak(self):
+        text = tk.simpledialog.askstring("Speak", "What should I say?")
+        if text:
+            self.speak_text(text)
+
+    def speak_text(self, text):
+        self.engine.say(text)
+        self.engine.runAndWait()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PurpleMonkeyAssistant(root)
+    root.mainloop()
